@@ -223,3 +223,5 @@ Yeni özellikler ve yeni içeriklerle uygulamanın zaman içerisinde geliştiril
 💬 Sohbet et.
 
 📺 Serileri takip et.
+
+ # Sürüm 1.0
