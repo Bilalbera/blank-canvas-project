@@ -10,4 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Kurucu yönetimi `/kurucu` altındaki korumalı sayfalarda tutulur; böylece rol denetimi ve yönetim arayüzü tek bir yerde uygulanır.
-- Nitro, `vendor/` altındaki doğrulanmış arşivden kurulur; uzak paket önbelleğindeki eksik dosyalar derlemeyi bozmasın.
+- Nitro, `vendor/nitro` altındaki doğrulanmış açılmış paketten kurulur; uzak paket önbelleğindeki eksik dosyalar derlemeyi bozmasın.
