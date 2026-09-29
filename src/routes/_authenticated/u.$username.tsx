@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/u/$username")({
 function UserProfile() {
   const { username } = Route.useParams();
   const { user } = useSession();
-  const me = user!.id;
+  const me = user?.id ?? "";
   const qc = useQueryClient();
   const navigate = useNavigate();
   const p = useQuery({
@@ -27,7 +27,7 @@ function UserProfile() {
   const other = p.data?.id;
   const rel = useQuery({
     queryKey: ["relation", me, other],
-    enabled: !!other,
+    enabled: !!me && !!other,
     queryFn: async () => {
       const [f, r] = await Promise.all([
         supabase.from("friendships").select("user_id").eq("user_id", me).eq("friend_id", other!).maybeSingle(),
@@ -38,7 +38,7 @@ function UserProfile() {
   });
   const refresh = () => qc.invalidateQueries({ queryKey: ["relation", me, other] });
 
-  if (p.isLoading) return <div className="mx-auto mt-28 h-40 max-w-3xl animate-pulse rounded-xl bg-card" />;
+  if (!user || p.isLoading) return <div className="mx-auto mt-28 h-40 max-w-3xl animate-pulse rounded-xl bg-card" />;
   if (!p.data) return <div className="pt-32"><EmptyState title="Kullanıcı bulunamadı" /></div>;
   if (other === me) return <div className="pt-32"><EmptyState title="Bu senin profilin" action={<Link to="/profil" className="text-primary">Profilime git</Link>} /></div>;
   const r = rel.data;

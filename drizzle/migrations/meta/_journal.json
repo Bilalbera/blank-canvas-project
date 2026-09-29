@@ -15,6 +15,20 @@
       "when": 1790542328637,
       "tag": "0001_media_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790668745474,
+      "tag": "0002_add_content_query_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790668870359,
+      "tag": "0003_secure_function_execution_permissions",
+      "breakpoints": true
     }
   ]
 }

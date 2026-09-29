@@ -36,12 +36,12 @@ export function ProfileForm({ onDone, submitLabel }: { onDone: () => void; submi
   async function save(e: React.FormEvent) {
     e.preventDefault();
     const u = username.trim().toLowerCase();
-    if (!/^[a-z0-9_.]{3,20}$/.test(u)) return toast.error("Kullanıcı adı 3-20 karakter; harf, rakam, _ ve . içerebilir.");
-    if (!displayName.trim()) return toast.error("Görünen ad gerekli.");
+    if (!/^[a-z0-9_.]{3,20}$/.test(u)) { toast.error("Kullanıcı adı 3-20 karakter; harf, rakam, _ ve . içerebilir."); return; }
+    if (!displayName.trim()) { toast.error("Görünen ad gerekli."); return; }
     setBusy(true);
     const { error } = await supabase.from("profiles").update({ username: u, display_name: displayName.trim(), bio: bio.trim() || null, avatar_url: avatar, onboarded: true }).eq("id", user!.id);
     setBusy(false);
-    if (error) return toast.error(error.code === "23505" ? "Bu kullanıcı adı alınmış." : "Kaydedilemedi.");
+    if (error) { toast.error(error.code === "23505" ? "Bu kullanıcı adı alınmış." : "Kaydedilemedi."); return; }
     await qc.invalidateQueries({ queryKey: ["my-profile"] });
     toast.success("Profil kaydedildi");
     onDone();

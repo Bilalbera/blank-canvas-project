@@ -6,6 +6,7 @@ import { useSession } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/giris")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Giriş Yap — Bilal Efendi" },
