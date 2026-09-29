@@ -1,0 +1,22 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Search, Shield, ShieldOff } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/useAuth";
+import { AdminHeading } from "@/components/app/AdminShell";
+import { UserAvatar } from "@/components/app/cards";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+export const Route = createFileRoute("/_authenticated/kurucu/kullanicilar")({ head: () => ({ meta: [{ title: "Kullanıcı Yönetimi — Bilal Efendi" }, { name: "description", content: "Kullanıcıları, erişimleri ve kurucu rollerini yönetin." }, { property: "og:title", content: "Kullanıcı Yönetimi — Bilal Efendi" }, { property: "og:description", content: "Kullanıcıları ve erişimlerini yönetin." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }), component: UsersAdmin });
+function UsersAdmin() {
+  const { user } = useSession(); const qc = useQueryClient(); const [search, setSearch] = useState("");
+  const query = useQuery({ queryKey: ["founder-users"], queryFn: async () => { const [{ data: profiles, error }, { data: roles }] = await Promise.all([supabase.from("profiles").select("*").order("created_at", { ascending: false }), supabase.from("user_roles").select("user_id,role")]); if (error) throw error; return (profiles ?? []).map((p) => ({ ...p, roles: (roles ?? []).filter((r) => r.user_id === p.id).map((r) => r.role) })); } });
+  const list = (query.data ?? []).filter((p) => `${p.display_name} ${p.username} ${p.email}`.toLocaleLowerCase("tr-TR").includes(search.toLocaleLowerCase("tr-TR")));
+  async function ban(id: string, banned: boolean) { const { error } = await supabase.from("profiles").update({ banned }).eq("id", id); if (error) toast.error(error.message); else { toast.success(banned ? "Hesap askıya alındı" : "Hesap yeniden açıldı"); qc.invalidateQueries({ queryKey: ["founder-users"] }); } }
+  async function founder(id: string, add: boolean) { const res = add ? await supabase.from("user_roles").insert({ user_id: id, role: "founder" }) : await supabase.from("user_roles").delete().eq("user_id", id).eq("role", "founder"); if (res.error) toast.error(res.error.message); else { toast.success("Rol güncellendi"); qc.invalidateQueries({ queryKey: ["founder-users"] }); } }
+  return <><AdminHeading title="Kullanıcılar" description="Üyeleri arayın, erişimlerini ve yetkilerini yönetin." /><div className="relative mb-4 max-w-md"><Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" /><Input className="pl-9" placeholder="İsim, kullanıcı adı veya e-posta..." value={search} onChange={(e) => setSearch(e.target.value)} /></div><div className="rounded-lg border border-border bg-card"><Table><TableHeader><TableRow><TableHead>Kullanıcı</TableHead><TableHead className="hidden md:table-cell">E-posta</TableHead><TableHead>Durum</TableHead><TableHead className="text-right">İşlemler</TableHead></TableRow></TableHeader><TableBody>{list.map((p) => { const isFounder = p.roles.includes("founder"); const isMe = p.id === user?.id; return <TableRow key={p.id}><TableCell><div className="flex items-center gap-3"><UserAvatar p={p} size={36} /><div><p className="font-medium">{p.display_name || "Kullanıcı"}</p><p className="text-xs text-muted-foreground">@{p.username}</p></div></div></TableCell><TableCell className="hidden text-muted-foreground md:table-cell">{p.email}</TableCell><TableCell><span className={`rounded-full px-2 py-1 text-xs ${p.banned ? "bg-destructive/15 text-destructive" : isFounder ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{p.banned ? "Askıda" : isFounder ? "Kurucu" : "Aktif"}</span></TableCell><TableCell><div className="flex justify-end gap-1"><Button size="icon" variant="ghost" disabled={isMe} onClick={() => founder(p.id, !isFounder)} aria-label={isFounder ? "Kurucu rolünü kaldır" : "Kurucu yap"}>{isFounder ? <ShieldOff /> : <Shield />}</Button><Button size="sm" variant={p.banned ? "secondary" : "destructive"} disabled={isMe} onClick={() => ban(p.id, !p.banned)}>{p.banned ? "Aç" : "Engelle"}</Button></div></TableCell></TableRow>; })}</TableBody></Table></div></>;
+}
