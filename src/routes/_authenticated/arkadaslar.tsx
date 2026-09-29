@@ -19,14 +19,15 @@ export const Route = createFileRoute("/_authenticated/arkadaslar")({
 
 function Friends() {
   const { user } = useSession();
-  const me = user!.id;
+  const me = user?.id ?? "";
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
-  const friends = useQuery({ queryKey: ["friends", me], queryFn: () => fetchFriends(me) });
+  const friends = useQuery({ queryKey: ["friends", me], enabled: !!me, queryFn: () => fetchFriends(me) });
   const reqs = useQuery({
     queryKey: ["friend-requests", me],
+    enabled: !!me,
     queryFn: async () => {
       const { data } = await supabase.from("friend_requests").select("*").eq("status", "pending").or(`sender_id.eq.${me},receiver_id.eq.${me}`).order("created_at", { ascending: false });
       const map = await fetchProfiles((data ?? []).map((r) => (r.sender_id === me ? r.receiver_id : r.sender_id)));
@@ -42,6 +43,7 @@ function Friends() {
     },
   });
   useEffect(() => {
+    if (!me) return;
     const ch = supabase.channel(`fr-${me}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "friend_requests" }, () => { qc.invalidateQueries({ queryKey: ["friend-requests", me] }); qc.invalidateQueries({ queryKey: ["friends", me] }); })
       .subscribe();
@@ -68,6 +70,10 @@ function Friends() {
       {children}
     </div>
   ) : null;
+
+  if (!user) {
+    return <main className="mx-auto max-w-3xl px-4 pb-20 pt-24"><div className="h-24 animate-pulse rounded-lg bg-card" /></main>;
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-20 pt-24">
