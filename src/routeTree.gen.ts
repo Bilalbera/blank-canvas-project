@@ -23,7 +23,10 @@ import { Route as AuthenticatedProfilRouteImport } from './routes/_authenticated
 import { Route as IzleIdRouteImport } from './routes/izle.$id'
 import { Route as SeriSlugRouteImport } from './routes/seri.$slug'
 import { Route as AuthenticatedKurucuIndexRouteImport } from './routes/_authenticated/kurucu.index'
+import { Route as AuthenticatedKurucuBolumlerRouteImport } from './routes/_authenticated/kurucu.bolumler'
+import { Route as AuthenticatedKurucuIstatistiklerRouteImport } from './routes/_authenticated/kurucu.istatistikler'
 import { Route as AuthenticatedKurucuKategorilerRouteImport } from './routes/_authenticated/kurucu.kategoriler'
+import { Route as AuthenticatedKurucuKullanicilarRouteImport } from './routes/_authenticated/kurucu.kullanicilar'
 import { Route as AuthenticatedKurucuSerilerRouteImport } from './routes/_authenticated/kurucu.seriler'
 import { Route as AuthenticatedUUsernameRouteImport } from './routes/_authenticated/u.$username'
 
@@ -97,10 +100,28 @@ const AuthenticatedKurucuIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedKurucuRoute,
   } as any)
+const AuthenticatedKurucuBolumlerRoute =
+  AuthenticatedKurucuBolumlerRouteImport.update({
+    id: '/bolumler',
+    path: '/bolumler',
+    getParentRoute: () => AuthenticatedKurucuRoute,
+  } as any)
+const AuthenticatedKurucuIstatistiklerRoute =
+  AuthenticatedKurucuIstatistiklerRouteImport.update({
+    id: '/istatistikler',
+    path: '/istatistikler',
+    getParentRoute: () => AuthenticatedKurucuRoute,
+  } as any)
 const AuthenticatedKurucuKategorilerRoute =
   AuthenticatedKurucuKategorilerRouteImport.update({
     id: '/kategoriler',
     path: '/kategoriler',
+    getParentRoute: () => AuthenticatedKurucuRoute,
+  } as any)
+const AuthenticatedKurucuKullanicilarRoute =
+  AuthenticatedKurucuKullanicilarRouteImport.update({
+    id: '/kullanicilar',
+    path: '/kullanicilar',
     getParentRoute: () => AuthenticatedKurucuRoute,
   } as any)
 const AuthenticatedKurucuSerilerRoute =
@@ -128,7 +149,10 @@ export interface FileRoutesByFullPath {
   '/profil': typeof AuthenticatedProfilRoute
   '/izle/$id': typeof IzleIdRoute
   '/seri/$slug': typeof SeriSlugRoute
+  '/kurucu/bolumler': typeof AuthenticatedKurucuBolumlerRoute
+  '/kurucu/istatistikler': typeof AuthenticatedKurucuIstatistiklerRoute
   '/kurucu/kategoriler': typeof AuthenticatedKurucuKategorilerRoute
+  '/kurucu/kullanicilar': typeof AuthenticatedKurucuKullanicilarRoute
   '/kurucu/seriler': typeof AuthenticatedKurucuSerilerRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
   '/kurucu/': typeof AuthenticatedKurucuIndexRoute
@@ -145,7 +169,10 @@ export interface FileRoutesByTo {
   '/profil': typeof AuthenticatedProfilRoute
   '/izle/$id': typeof IzleIdRoute
   '/seri/$slug': typeof SeriSlugRoute
+  '/kurucu/bolumler': typeof AuthenticatedKurucuBolumlerRoute
+  '/kurucu/istatistikler': typeof AuthenticatedKurucuIstatistiklerRoute
   '/kurucu/kategoriler': typeof AuthenticatedKurucuKategorilerRoute
+  '/kurucu/kullanicilar': typeof AuthenticatedKurucuKullanicilarRoute
   '/kurucu/seriler': typeof AuthenticatedKurucuSerilerRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
   '/kurucu': typeof AuthenticatedKurucuIndexRoute
@@ -165,7 +192,10 @@ export interface FileRoutesById {
   '/_authenticated/profil': typeof AuthenticatedProfilRoute
   '/izle/$id': typeof IzleIdRoute
   '/seri/$slug': typeof SeriSlugRoute
+  '/_authenticated/kurucu/bolumler': typeof AuthenticatedKurucuBolumlerRoute
+  '/_authenticated/kurucu/istatistikler': typeof AuthenticatedKurucuIstatistiklerRoute
   '/_authenticated/kurucu/kategoriler': typeof AuthenticatedKurucuKategorilerRoute
+  '/_authenticated/kurucu/kullanicilar': typeof AuthenticatedKurucuKullanicilarRoute
   '/_authenticated/kurucu/seriler': typeof AuthenticatedKurucuSerilerRoute
   '/_authenticated/u/$username': typeof AuthenticatedUUsernameRoute
   '/_authenticated/kurucu/': typeof AuthenticatedKurucuIndexRoute
@@ -185,7 +215,10 @@ export interface FileRouteTypes {
     | '/profil'
     | '/izle/$id'
     | '/seri/$slug'
+    | '/kurucu/bolumler'
+    | '/kurucu/istatistikler'
     | '/kurucu/kategoriler'
+    | '/kurucu/kullanicilar'
     | '/kurucu/seriler'
     | '/u/$username'
     | '/kurucu/'
@@ -202,7 +235,10 @@ export interface FileRouteTypes {
     | '/profil'
     | '/izle/$id'
     | '/seri/$slug'
+    | '/kurucu/bolumler'
+    | '/kurucu/istatistikler'
     | '/kurucu/kategoriler'
+    | '/kurucu/kullanicilar'
     | '/kurucu/seriler'
     | '/u/$username'
     | '/kurucu'
@@ -221,7 +257,10 @@ export interface FileRouteTypes {
     | '/_authenticated/profil'
     | '/izle/$id'
     | '/seri/$slug'
+    | '/_authenticated/kurucu/bolumler'
+    | '/_authenticated/kurucu/istatistikler'
     | '/_authenticated/kurucu/kategoriler'
+    | '/_authenticated/kurucu/kullanicilar'
     | '/_authenticated/kurucu/seriler'
     | '/_authenticated/u/$username'
     | '/_authenticated/kurucu/'
@@ -338,11 +377,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedKurucuIndexRouteImport
       parentRoute: typeof AuthenticatedKurucuRoute
     }
+    '/_authenticated/kurucu/bolumler': {
+      id: '/_authenticated/kurucu/bolumler'
+      path: '/bolumler'
+      fullPath: '/kurucu/bolumler'
+      preLoaderRoute: typeof AuthenticatedKurucuBolumlerRouteImport
+      parentRoute: typeof AuthenticatedKurucuRoute
+    }
+    '/_authenticated/kurucu/istatistikler': {
+      id: '/_authenticated/kurucu/istatistikler'
+      path: '/istatistikler'
+      fullPath: '/kurucu/istatistikler'
+      preLoaderRoute: typeof AuthenticatedKurucuIstatistiklerRouteImport
+      parentRoute: typeof AuthenticatedKurucuRoute
+    }
     '/_authenticated/kurucu/kategoriler': {
       id: '/_authenticated/kurucu/kategoriler'
       path: '/kategoriler'
       fullPath: '/kurucu/kategoriler'
       preLoaderRoute: typeof AuthenticatedKurucuKategorilerRouteImport
+      parentRoute: typeof AuthenticatedKurucuRoute
+    }
+    '/_authenticated/kurucu/kullanicilar': {
+      id: '/_authenticated/kurucu/kullanicilar'
+      path: '/kullanicilar'
+      fullPath: '/kurucu/kullanicilar'
+      preLoaderRoute: typeof AuthenticatedKurucuKullanicilarRouteImport
       parentRoute: typeof AuthenticatedKurucuRoute
     }
     '/_authenticated/kurucu/seriler': {
@@ -363,13 +423,19 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedKurucuRouteChildren {
+  AuthenticatedKurucuBolumlerRoute: typeof AuthenticatedKurucuBolumlerRoute
+  AuthenticatedKurucuIstatistiklerRoute: typeof AuthenticatedKurucuIstatistiklerRoute
   AuthenticatedKurucuKategorilerRoute: typeof AuthenticatedKurucuKategorilerRoute
+  AuthenticatedKurucuKullanicilarRoute: typeof AuthenticatedKurucuKullanicilarRoute
   AuthenticatedKurucuSerilerRoute: typeof AuthenticatedKurucuSerilerRoute
   AuthenticatedKurucuIndexRoute: typeof AuthenticatedKurucuIndexRoute
 }
 
 const AuthenticatedKurucuRouteChildren: AuthenticatedKurucuRouteChildren = {
+  AuthenticatedKurucuBolumlerRoute: AuthenticatedKurucuBolumlerRoute,
+  AuthenticatedKurucuIstatistiklerRoute: AuthenticatedKurucuIstatistiklerRoute,
   AuthenticatedKurucuKategorilerRoute: AuthenticatedKurucuKategorilerRoute,
+  AuthenticatedKurucuKullanicilarRoute: AuthenticatedKurucuKullanicilarRoute,
   AuthenticatedKurucuSerilerRoute: AuthenticatedKurucuSerilerRoute,
   AuthenticatedKurucuIndexRoute: AuthenticatedKurucuIndexRoute,
 }
