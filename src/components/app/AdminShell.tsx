@@ -37,7 +37,7 @@ export function AdminShell() {
               <Link
                 key={item.to}
                 to={item.to}
-                activeOptions={{ exact: item.exact ?? false }}
+                activeOptions={{ exact: "exact" in item && item.exact }}
                 activeProps={{ className: "!bg-sidebar-accent !text-sidebar-primary" }}
                 className="flex shrink-0 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
               >

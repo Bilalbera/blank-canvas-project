@@ -59,7 +59,7 @@ function Friends() {
   async function cancel(id: string) { await supabase.from("friend_requests").delete().eq("id", id); refresh(); }
   async function msg(id: string) { const c = await openConversation(id); navigate({ to: "/mesajlar", search: { c } }); }
 
-  const Row = ({ p, children }: { p?: MiniProfile; children?: React.ReactNode }) => p ? (
+  const Row = ({ p, children }: { p?: MiniProfile | undefined; children?: React.ReactNode }) => p ? (
     <div className="flex items-center gap-3 rounded-lg bg-card p-3">
       <Link to="/u/$username" params={{ username: p.username ?? p.id }} className="flex min-w-0 flex-1 items-center gap-3">
         <UserAvatar p={p} online={isOnline(p.last_seen)} />

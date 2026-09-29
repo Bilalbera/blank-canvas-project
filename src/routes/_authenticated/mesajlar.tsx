@@ -61,7 +61,7 @@ function Messages() {
           {convs.data?.length === 0 && <p className="px-4 text-sm text-muted-foreground">Henüz sohbet yok. Bir arkadaşının profilinden mesaj gönder.</p>}
           {convs.data?.map((cv) => (
             <button key={cv.id} onClick={() => navigate({ to: "/mesajlar", search: { c: cv.id } })} className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-card ${cv.id === c ? "bg-card" : ""}`}>
-              <UserAvatar p={cv.other} online={isOnline(cv.other?.last_seen)} />
+              <UserAvatar p={cv.other ?? null} online={isOnline(cv.other?.last_seen)} />
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between gap-2"><p className="truncate font-semibold">{cv.other?.display_name ?? "Kullanıcı"}</p><span className="shrink-0 text-[10px] text-muted-foreground">{relativeTime(cv.last?.created_at)}</span></div>
                 <div className="flex justify-between gap-2">
@@ -74,13 +74,13 @@ function Messages() {
         </div>
       </aside>
       <section className={`min-w-0 flex-1 ${c ? "flex" : "hidden sm:flex"} flex-col`}>
-        {c ? <ChatWindow key={c} conversationId={c} me={me} other={active?.other} /> : <div className="m-auto"><EmptyState title="Bir sohbet seç" text="Soldan bir sohbet seçerek mesajlaşmaya başla." /></div>}
+        {c ? <ChatWindow key={c} conversationId={c} me={me} other={active?.other ?? null} /> : <div className="m-auto"><EmptyState title="Bir sohbet seç" text="Soldan bir sohbet seçerek mesajlaşmaya başla." /></div>}
       </section>
     </main>
   );
 }
 
-function ChatWindow({ conversationId, me, other }: { conversationId: string; me: string; other?: { id: string; username: string | null; display_name: string | null; avatar_url: string | null; last_seen: string } }) {
+function ChatWindow({ conversationId, me, other }: { conversationId: string; me: string; other: { id: string; username: string | null; display_name: string | null; avatar_url: string | null; last_seen: string } | null }) {
   const qc = useQueryClient();
   const [text, setText] = useState("");
   const bottom = useRef<HTMLDivElement>(null);

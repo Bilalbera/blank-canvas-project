@@ -20,12 +20,18 @@ export function useToggle(table: Kind, id: string) {
     },
   });
   async function toggle() {
-    if (!user) return toast("Bunun için giriş yapmalısın");
+    if (!user) {
+      toast("Bunun için giriş yapmalısın");
+      return;
+    }
     if (q.data) {
       await supabase.from(table).delete().eq("user_id", user.id).eq(col as never, id as never);
     } else {
       const { error } = await supabase.from(table).insert({ user_id: user.id, [col]: id } as never);
-      if (error) return toast.error("İşlem başarısız");
+      if (error) {
+        toast.error("İşlem başarısız");
+        return;
+      }
     }
     qc.setQueryData(key, !q.data);
     qc.invalidateQueries({ queryKey: [`my-${table}`] });
