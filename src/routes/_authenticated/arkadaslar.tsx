@@ -36,7 +36,7 @@ function Friends() {
   });
   const found = useQuery({
     queryKey: ["user-search", search],
-    enabled: search.trim().length >= 2,
+    enabled: !!me && search.trim().length >= 2,
     queryFn: async () => {
       const t = `%${search.trim().replace(/[%_,()]/g, "")}%`;
       return (await supabase.from("profiles").select("id, username, display_name, avatar_url, last_seen").neq("id", me).or(`username.ilike.${t},display_name.ilike.${t}`).limit(20)).data ?? [];

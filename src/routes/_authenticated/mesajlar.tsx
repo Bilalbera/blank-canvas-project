@@ -20,12 +20,13 @@ export const Route = createFileRoute("/_authenticated/mesajlar")({
 
 function Messages() {
   const { user } = useSession();
-  const me = user!.id;
+  const me = user?.id ?? "";
   const { c } = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
   const convs = useQuery({
     queryKey: ["conversations", me],
+    enabled: !!me,
     queryFn: async () => {
       const { data: mine } = await supabase.from("conversation_members").select("conversation_id, last_read_at, conversations(last_message_at)").eq("user_id", me);
       const ids = (mine ?? []).map((m) => m.conversation_id);
@@ -44,6 +45,7 @@ function Messages() {
     },
   });
   useEffect(() => {
+    if (!me) return;
     const ch = supabase.channel(`inbox-${me}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, () => qc.invalidateQueries({ queryKey: ["conversations", me] }))
       .subscribe();
@@ -51,6 +53,10 @@ function Messages() {
   }, [me, qc]);
 
   const active = convs.data?.find((x) => x.id === c);
+
+  if (!user) {
+    return <main className="mx-auto h-[100dvh] max-w-6xl px-4 pt-20"><div className="h-24 animate-pulse rounded-lg bg-card" /></main>;
+  }
 
   return (
     <main className="mx-auto flex h-[100dvh] max-w-6xl gap-0 px-0 pb-0 pt-16 sm:px-4 sm:pb-4">
