@@ -46,7 +46,8 @@ function SeriesDetail() {
 
   if (q.isLoading) return <div className="h-[60vh] animate-pulse bg-card" />;
   if (!s) return <div className="pt-32"><EmptyState title="Seri bulunamadı" action={<Link to="/seriler" className="text-primary">Tüm seriler</Link>} /></div>;
-  const pm = new Map((progress.data ?? []).map((p) => [p.episode_id, p]));
+  type Progress = { episode_id: string; completed: boolean | null; duration_seconds: number | null; position_seconds: number };
+  const pm = new Map<string, Progress>((progress.data ?? []).map((p: Progress) => [p.episode_id, p] as const));
   const first = eps[0];
 
   return (
